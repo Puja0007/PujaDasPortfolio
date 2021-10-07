@@ -1,67 +1,90 @@
-$(document).ready(function(){
-    $(window).scroll(function(){
+window.onload = function () {
+
+    const TypeWriter = function (txtElement, words) {
+        this.txtElement = txtElement; // text element container // 
+        this.words = words; // [frontend developer]
+        this.txt = ""; // current showing words
+        this.wordIndex = 0; // the index of currently showing word
+        this.type();
+        this.isDeleting = false; // the word is deleted or typed
+    }
+
+
+
+    TypeWriter.prototype.type = function () {
+        //current index of word
+        const current = this.wordIndex % this.words.length; // for continuous typing and deleting a loop
+        // get full text of current word
+        const fullTxt = this.words[current];
+
+        // check if deleting
+        if (!this.isDeleting) {
+            // add char
+            this.txt = fullTxt.substring(0, this.txt.length + 1); // adding one by one word
+
+
+        } else {
+            // remove char
+            this.txt = fullTxt.substring(0, this.txt.length - 1); // removing one by one word
+        }
+
+        // insert text into element
+        this.txtElement.innerText = this.txt;
+
+        // Initial type speed
+        let typeSpeed = 300;
+
+        if (this.isDeleting) {
+            typeSpeed /= 2;   // the deleting speed of each word is  2x of typing speed
+        }
+
+        // If word is complete
+        if (!this.isDeleting && this.txt === fullTxt) {
+            this.isDeleting = true;
+        } else if (this.isDeleting && this.txt === '') {
+            this.isDeleting = false;
+            this.wordIndex++;
+        }
+
+        setTimeout(() => this.type(), typeSpeed);
+    }
+
+    function typing() {
+        const txtElement = document.querySelector('.typing');
+        const words = ['Frontend Developer'];
+        new TypeWriter(txtElement, words);
+    }
+
+    typing();  // first step
+
+    window.addEventListener('scroll', () => {
         // sticky navbar on scroll script
-        if(this.scrollY > 20){
-            $('.navbar').addClass("sticky");
-        }else{
-            $('.navbar').removeClass("sticky");
+        if (window.scrollY > 20) {
+            document.querySelector('.navbar').classList.add("sticky");
+        } else {
+            document.querySelector('.navbar').classList.remove("sticky");
         }
-        
+
         // scroll-up button show/hide script
-        if(this.scrollY > 500){
-            $('.scroll-up-btn').addClass("show");
-        }else{
-            $('.scroll-up-btn').removeClass("show");
+
+        if (window.scrollY > 500) {
+            document.querySelector('.scroll-up-btn').classList.add("show");
+        } else {
+            document.querySelector('.scroll-up-btn').classList.remove("show");
         }
     });
 
-    // slide-up script
-    $('.scroll-up-btn').click(function(){
-        $('html').animate({scrollTop: 0});
-        // removing smooth scroll on slide-up button click
-        $('html').css("scrollBehavior", "auto");
+    document.querySelector('#scroll').addEventListener('click', () => {
+        window.scrollTo(0, 0);
     });
 
-    $('.navbar .menu li a').click(function(){
-        // applying again smooth scroll on menu items click
-        $('html').css("scrollBehavior", "smooth");
-    });
-
-    // toggle menu/navbar script
-    $('.menu-btn').click(function(){
-        $('.navbar .menu').toggleClass("active");
-        $('.menu-btn i').toggleClass("active");
-    });
-
-    // typing text animation script
-    var typed = new Typed(".typing", {
-        strings: ["Frontend Developer"],
-        typeSpeed: 100,
-        backSpeed: 60,
-        loop: true
-    });
+}
 
 
-    // owl carousel script
-    $('.carousel').owlCarousel({
-        margin: 20,
-        loop: true,
-        autoplay: true,
-        autoplayTimeOut: 2000,
-        autoplayHoverPause: true,
-        responsive: {
-            0:{
-                items: 1,
-                nav: false
-            },
-            600:{
-                items: 2,
-                nav: false
-            },
-            1000:{
-                items: 3,
-                nav: false
-            },
-        }
-    });
-});
+
+
+
+
+
+
+
